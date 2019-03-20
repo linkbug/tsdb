@@ -1699,10 +1699,12 @@ func TestPostingsForMatchers(t *testing.T) {
 		testutil.Ok(t, h.Close())
 	}()
 
-	h.getOrCreate(0, labels.FromStrings("n", "1"))
-	h.getOrCreate(0, labels.FromStrings("n", "1", "i", "a"))
-	h.getOrCreate(0, labels.FromStrings("n", "1", "i", "b"))
-	h.getOrCreate(0, labels.FromStrings("n", "2"))
+	app := h.Appender()
+	app.Add(labels.FromStrings("n", "1"), 0, 0)
+	app.Add(labels.FromStrings("n", "1", "i", "a"), 0, 0)
+	app.Add(labels.FromStrings("n", "1", "i", "b"), 0, 0)
+	app.Add(labels.FromStrings("n", "2"), 0, 0)
+	testutil.Ok(t, app.Commit())
 
 	cases := []struct {
 		matchers []labels.Matcher
