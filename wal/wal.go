@@ -514,6 +514,13 @@ func (w *WAL) log(rec []byte, final bool) error {
 	// Populate as many pages as necessary to fit the record.
 	// Be careful to always do one pass to ensure we write zero-length records.
 	for i := 0; i == 0 || len(rec) > 0; i++ {
+		
+		//need flushPage, otherwise l maybe < 0, and panic
+		if w.page.full() {
+			if err := w.flushPage(false); err != nil {
+				return err
+			}
+		}
 		p := w.page
 
 		// Find how much of the record we can fit into the page.
